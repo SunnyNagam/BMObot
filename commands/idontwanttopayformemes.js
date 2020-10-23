@@ -45,7 +45,6 @@ module.exports = {
             }
             // token is hour | minute | second
             // cron looks like "s m h d m w"
-            let num = 1;
             switch (token) {
               case "min":
               case "minute":
