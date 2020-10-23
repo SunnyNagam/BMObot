@@ -19,8 +19,8 @@ module.exports = {
     let failed = false;
     const err = (m) => (failed = true, message.channel.send(m || "I don't know what to do"));
     const cap = (n, low, high) => Math.min(Math.max(n, low), high);
-    const nextToken = () => {
-      if (i >= args.length) return err(), false;
+    const nextToken = (required) => {
+      if (i >= args.length) return required ? err() : false, false;
       return token = args[i++].toLowerCase(), true;
     }
     let cron = '';
@@ -30,7 +30,7 @@ module.exports = {
       nextToken();
       switch (token.toLowerCase()) {
         case "stop":
-          if (nextToken()) {
+          if (nextToken(false)) {
             if (this.currentSchedule.has(token)) {
               this.currentSchedule.get(token).cancel();
               this.currentSchedule.delete(token);
@@ -42,7 +42,7 @@ module.exports = {
           err('Stopping!');
           break;
         case "every":
-          if (nextToken()) {
+          if (nextToken(true)) {
             let numOrNot = parseInt(token);
             let num = 1;
             if (!isNaN(numOrNot)) {
@@ -80,10 +80,10 @@ module.exports = {
           }
           break;
         case "cron": 
-          if (nextToken()) cron = token;
+          if (nextToken(true)) cron = token;
           break;
         case "until":
-          if (nextToken()) end = new Date(token);
+          if (nextToken(true)) end = new Date(token);
           break;
         case "forever":
           end = -1;
