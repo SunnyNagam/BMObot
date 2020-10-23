@@ -1,7 +1,8 @@
+import { v4 as uuidv4 } from 'uuid';
 var request = require("request");
 var scheduler = require("node-schedule");
 
-let currentSchedule;
+let currentSchedule = new Map();
 
 module.exports = {
   name: 'memes',
@@ -11,6 +12,7 @@ module.exports = {
     !memes every friday until 2020-11-11
     !memes stop
   `,
+  currentSchedule: new Map(),
   execute(message, args) {
     let i = 0;
     let token = '';
@@ -28,9 +30,15 @@ module.exports = {
       nextToken();
       switch (token.toLowerCase()) {
         case "stop":
-          if (currentSchedule)
-            currentSchedule.cancel();
-          currentSchedule = undefined;
+          if (nextToken()) {
+            if (this.currentSchedule.has(token)) {
+              this.currentSchedule.get(token).cancel();
+              this.currentSchedule.delete(token);
+            }
+          } else {
+            this.currentSchedule.forEach( v => v.cancel() );
+            this.currentSchedule.clear();
+          }
           err('Stopping!');
           break;
         case "every":
@@ -85,17 +93,19 @@ module.exports = {
       }
       if (failed) break;
     }
+    if (failed) return;
 
     const rule = { rule: cron };
-    if (end !== -1) obj.end = end;
+    if (end !== -1) rule.end = end;
 
-    message.reply(`Looks like you want memes on this schedule: ${cron}`);
-
-    scheduler.scheduleJob(rule, function(){
+    let job = scheduler.scheduleJob(rule, function(){
       message.channel
-        .send("pls meme")
-        .then (myMessage => myMessage({timeout: 10000})); // delete this message after 10 seconds
+      .send("pls meme")
+      .then (myMessage => myMessage({timeout: 10000})); // delete this message after 10 seconds
     });
 
+    let id = uuidv4();
+    message.reply(`Scheduling ${cron} with id: *${id}*`);
+    this.currentSchedule.set(id, job);
   },
 };
