@@ -1,6 +1,6 @@
-import { v4 as uuidv4 } from 'uuid';
-var request = require("request");
-var scheduler = require("node-schedule");
+const { v4: uuidv4 } = require('uuid');
+const request = require("request");
+const scheduler = require("node-schedule");
 
 let currentSchedule = new Map();
 
