@@ -100,7 +100,7 @@ module.exports = {
 
     let job = scheduler.scheduleJob(rule, function(){
       message.channel
-      .send("pls meme")
+      .send("!bibletime")
       .then (myMessage => myMessage({timeout: 10000})); // delete this message after 10 seconds
     });
 
