@@ -7,7 +7,7 @@ let currentSchedule = new Map();
 module.exports = {
   name: 'memes',
   description: `
-    Asks memebot for memes: 
+    Asks memebot for memes:
     !memes every 5 minutes forever
     !memes every friday until 2020-11-11
     !memes stop
@@ -79,7 +79,7 @@ module.exports = {
             }
           }
           break;
-        case "cron": 
+        case "cron":
           if (nextToken(true)) cron = token;
           break;
         case "until":
@@ -101,7 +101,7 @@ module.exports = {
     let job = scheduler.scheduleJob(rule, function(){
       message.channel
       .send("!bibletime")
-      .then (myMessage => myMessage({timeout: 10000})); // delete this message after 10 seconds
+      .then (myMessage => myMessage.delete(10000)); // delete this message after 10 seconds
     });
 
     let id = uuidv4();
